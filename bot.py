@@ -1,14 +1,14 @@
 import os
-import re
 import logging
 import tempfile
 from flask import Flask, request
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters
 import yt_dlp
+import asyncio
 
 # --- Config ---
-TOKEN = os.getenv("BOT_TOKEN")  # set BOT_TOKEN in Render environment
+TOKEN = os.getenv("BOT_TOKEN")  # set in Render environment
 URL = os.getenv("APP_URL")      # e.g. https://your-service.onrender.com
 PORT = int(os.environ.get("PORT", 10000))
 
@@ -44,7 +44,7 @@ async def handle_reel(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     info = ydl.extract_info(text, download=True)
                     filename = ydl.prepare_filename(info)
 
-                # Send reel privately to user
+                # Send reel privately
                 await context.bot.send_video(chat_id=user_id, video=open(filename, "rb"))
 
             await update.message.reply_text("✅ Sent to your private chat!")
@@ -55,24 +55,24 @@ async def handle_reel(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # --- Main ---
 def main():
-    app = Application.builder().token(TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_reel))
+    application = Application.builder().token(TOKEN).build()
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_reel))
 
     # Flask route for Telegram webhook
     @flask_app.route(f"/{TOKEN}", methods=["POST"])
     def webhook():
-        update = Update.de_json(request.get_json(force=True), app.bot)
-        app.update_queue.put(update)
+        update = Update.de_json(request.get_json(force=True), application.bot)
+        asyncio.run(application.process_update(update))
         return "ok", 200
 
-    # Set webhook
+    # Set webhook once at startup
     async def set_webhook():
-        await app.bot.set_webhook(url=f"{URL}/{TOKEN}")
+        await application.bot.set_webhook(url=f"{URL}/{TOKEN}")
 
-    app.create_task(set_webhook())  # schedule webhook setup
+    asyncio.get_event_loop().run_until_complete(set_webhook())
 
-    # Start Flask server (Render runs this)
+    # Run Flask app (Render will keep this running)
     flask_app.run(host="0.0.0.0", port=PORT)
 
 if __name__ == "__main__":
