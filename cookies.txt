@@ -1,6 +1,7 @@
+# Netscape HTTP Cookie File
 .instagram.com    TRUE    /    TRUE    0    csrftoken    2kMgH1LtqJ74WNbXRVIMiON0twiUQAgo
 .instagram.com    TRUE    /    TRUE    0    sessionid    76761498454%3AhYNTyTof7SdHZJ%3A21%3AAYeGAPBFEUPYwd58X_H6g91Iahc9lzFUeF3qwMPNug
 .instagram.com    TRUE    /    TRUE    0    ds_user_id   76761498454
 .instagram.com    TRUE    /    TRUE    0    mid          aFlLSQALAAGeLj_sWsdu8dLDjfG3
 .instagram.com    TRUE    /    TRUE    0    ig_did       971AC7A6-00F4-48C5-9FB7-FB9D4CC75284
-.instagram.com    TRUE    /    TRUE    0    rur          "HIL\05476761498454\0541788637774:01febffa088919bb470795e2fb4a99c8dcbce1947f2ad581a757d1620ab643dc96999533"
+.instagram.com    TRUE    /    TRUE    0    rur          HIL,76761498454,1788637774:01febffa088919bb470795e2fb4a99c8dcbce1947f2ad581a757d1620ab643dc96999533
